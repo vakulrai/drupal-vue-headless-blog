@@ -1,0 +1,147 @@
+name: Drupal CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'drupal/**'
+      - 'render.yaml'
+      - '.github/workflows/drupal.yml'
+  pull_request:
+    paths:
+      - 'drupal/**'
+      - 'render.yaml'
+      - '.github/workflows/drupal.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: drupal-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Composer, code standards, config install, API smoke test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: drupal
+
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_DATABASE: drupal
+          MARIADB_USER: drupal
+          MARIADB_PASSWORD: drupal
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    # Throwaway database that only exists inside this CI job.
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: drupal
+      DB_USER: drupal
+      DB_PASSWORD: drupal
+      DRUPAL_HASH_SALT: ci-only-salt-for-a-temporary-test-site
+      TRUSTED_HOST_PATTERNS: '^127\.0\.0\.1$,^localhost$'
+      CORS_ALLOWED_ORIGINS: http://localhost:5173
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: gd, pdo_mysql, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --no-check-publish
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-${{ hashFiles('drupal/composer.lock') }}
+          restore-keys: composer-
+
+      - name: Composer install
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: PHP syntax check
+        run: find web/modules/custom -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Drupal coding standards
+        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,yml web/modules/custom
+
+      - name: Install Drupal from config/sync
+        run: vendor/bin/drush site:install --existing-config -y --account-pass="$(openssl rand -hex 16)"
+
+      - name: Configuration validation (database must match config/sync)
+        run: |
+          changes=$(vendor/bin/drush config:status --format=list 2>/dev/null)
+          if [ -n "$changes" ]; then
+            echo "::error::Configuration differs from config/sync:"
+            echo "$changes"
+            exit 1
+          fi
+          echo "Active configuration matches config/sync."
+
+      - name: Seed content
+        run: vendor/bin/drush headless-blog:seed
+
+      - name: API smoke test
+        run: |
+          (cd web && php -S 127.0.0.1:8888 .ht.router.php > /tmp/php-server.log 2>&1 &)
+          sleep 2
+          base=http://127.0.0.1:8888
+
+          blogs=$(curl -fsS "$base/jsonapi/node/blog" | jq '.data | length')
+          categories=$(curl -fsS "$base/jsonapi/taxonomy_term/category" | jq '.data | length')
+          echo "Blogs: $blogs, categories: $categories"
+          [ "$blogs" -ge 1 ] && [ "$categories" -eq 4 ]
+
+          by_slug=$(curl -fsS -g "$base/jsonapi/node/blog?filter[field_slug]=getting-started-with-vue-3-composition-api" | jq -r '.data[0].attributes.title')
+          echo "Lookup by slug: $by_slug"
+          [ "$by_slug" != "null" ]
+
+          status=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' \
+            -d '{"name":"CI","email":"ci@example.com","message":"Smoke test message"}' "$base/api/contact")
+          echo "Contact endpoint: $status"
+          [ "$status" -eq 201 ]
+
+          [ "$(curl -s -o /dev/null -w '%{http_code}' "$base/api/me")" -eq 403 ]
+
+  docker:
+    name: Build production image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image Render deploys
+        run: docker build --target prod -t headless-blog-cms:ci ./drupal
+
+  deploy:
+    name: Deploy to Render
+    needs: [validate, docker]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Trigger Render deploy hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "::warning::RENDER_DEPLOY_HOOK_URL is not configured, skipping deployment."
+            exit 0
+          fi
+          curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL" > /dev/null
+          echo "Render deploy triggered. The container installs/updates Drupal on boot (see drupal/docker/entrypoint.sh)." >> "$GITHUB_STEP_SUMMARY"
