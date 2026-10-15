@@ -1,0 +1,134 @@
+# Initial content created once by `drush headless-blog:seed`.
+# After that, everything is managed in the Drupal admin UI.
+
+categories:
+  - name: Technology
+    description: 'Frameworks, tooling and the craft of building software.'
+  - name: Business
+    description: 'Strategy, teams and the economics of digital products.'
+  - name: Cloud
+    description: 'Hosting, infrastructure and running applications in production.'
+  - name: AI
+    description: 'Machine learning and intelligent features in real products.'
+
+blogs:
+  - title: 'Getting Started with Vue 3 and the Composition API'
+    slug: getting-started-with-vue-3-composition-api
+    category: Technology
+    featured: true
+    days_ago: 2
+    image: vue-composition-api.jpg
+    image_alt: 'Laptop on a wooden desk next to a notebook'
+    summary: 'A practical walkthrough of refs, computed values and composables, and why they make Vue components easier to grow.'
+    body: |
+      <p>Vue 3 introduced the Composition API as an alternative to the Options API. Instead of spreading a feature across <code>data</code>, <code>computed</code> and <code>methods</code>, you keep everything that belongs together in one place.</p>
+      <h2>Reactive state with ref and computed</h2>
+      <p><code>ref()</code> wraps a value so Vue can track it, and <code>computed()</code> derives new values that update automatically. Together they replace most of what <code>data</code> and <code>computed</code> used to do.</p>
+      <h2>Composables</h2>
+      <p>A composable is a plain function that uses reactive primitives and returns state. Fetching data, handling pagination or reading the current route can all live in small composables that any component can reuse.</p>
+      <p>Start small: convert one component, extract one composable, and let the pattern prove itself before rewriting everything.</p>
+
+  - title: 'Why Headless Drupal Works Well for Content Teams'
+    slug: why-headless-drupal-works-well-for-content-teams
+    category: Technology
+    featured: false
+    days_ago: 5
+    image: headless-drupal-content-teams.jpg
+    image_alt: 'Open laptop with a notebook and a cup of coffee'
+    summary: 'Editors keep a mature CMS while developers get freedom on the frontend. Here is how the split plays out in practice.'
+    body: |
+      <p>In a headless setup Drupal stores and manages content, while a separate frontend application decides how it looks. The two talk to each other over an API such as JSON:API.</p>
+      <h2>What editors keep</h2>
+      <p>Revisions, roles and permissions, media handling and a structured content model all stay in Drupal. Editors do not need to learn anything new.</p>
+      <h2>What developers gain</h2>
+      <p>The frontend team can use modern tooling, deploy independently and ship UI changes without touching the CMS. Content changes, in turn, never require a frontend release.</p>
+      <p>The trade-off is extra moving parts: two deployments, CORS, and preview workflows need to be planned from the start.</p>
+
+  - title: 'Measuring the ROI of a Content Platform Migration'
+    slug: measuring-the-roi-of-a-content-platform-migration
+    category: Business
+    featured: false
+    days_ago: 8
+    image: content-platform-roi.jpg
+    image_alt: 'Glass office tower seen from below'
+    summary: 'Migrations are expensive. These are the numbers worth tracking before and after the switch.'
+    body: |
+      <p>A CMS migration is rarely justified by technology alone. To get buy-in, tie the project to numbers that the business already watches.</p>
+      <h2>Metrics to baseline first</h2>
+      <ul><li>Time from draft to published article</li><li>Number of developer tickets raised by editors</li><li>Page load time and its effect on conversion</li><li>Hosting and licence costs per year</li></ul>
+      <p>Measure the same metrics three and six months after launch. The improvement in publishing speed is usually the easiest win to demonstrate.</p>
+
+  - title: 'Building a Remote-First Engineering Team'
+    slug: building-a-remote-first-engineering-team
+    category: Business
+    featured: false
+    days_ago: 12
+    image: remote-first-engineering.jpg
+    image_alt: 'Home office desk with a laptop near a window'
+    summary: 'Written communication, clear ownership and fewer meetings: lessons from teams that work across time zones.'
+    body: |
+      <p>Remote-first is different from remote-friendly. In a remote-first team, every process assumes that nobody is in the same room.</p>
+      <h2>Write things down</h2>
+      <p>Decisions, architecture notes and onboarding guides belong in shared documents, not in someone's memory. Good pull request descriptions are part of this culture.</p>
+      <h2>Protect focus time</h2>
+      <p>Keep meetings for discussions that genuinely need them, and move status updates to asynchronous channels.</p>
+
+  - title: 'Deploying Containers on a Free-Tier Budget'
+    slug: deploying-containers-on-a-free-tier-budget
+    category: Cloud
+    featured: true
+    days_ago: 3
+    image: containers-free-tier.jpg
+    image_alt: 'City skyline at sunset'
+    summary: 'You can run a real application stack for free if you understand cold starts, sleeping services and ephemeral disks.'
+    body: |
+      <p>Free tiers from platforms such as Render, Vercel and Aiven are enough to host a complete demo application, as long as you design around their limits.</p>
+      <h2>Know the limits</h2>
+      <ul><li>Free web services often sleep after a period of inactivity, so the first request is slow.</li><li>Container file systems are usually ephemeral; anything written to disk can disappear on restart.</li><li>Databases have connection and storage caps.</li></ul>
+      <h2>Design for them</h2>
+      <p>Keep state in the database, rebuild everything else from the repository, and automate deployments so a fresh container always comes up in a known state.</p>
+
+  - title: 'Managed Databases vs Self-Hosted: A Practical Comparison'
+    slug: managed-databases-vs-self-hosted
+    category: Cloud
+    featured: false
+    days_ago: 15
+    image: managed-vs-self-hosted-databases.jpg
+    image_alt: 'Skyscrapers reaching towards the sky'
+    summary: 'Backups, upgrades and TLS come for free with a managed database. When is running your own still worth it?'
+    body: |
+      <p>Running MySQL in a container is easy. Running it reliably for years is not. Managed services take care of backups, patching and failover.</p>
+      <h2>When managed wins</h2>
+      <p>Small teams, production workloads and anything that needs point-in-time recovery are good candidates for a managed service.</p>
+      <h2>When self-hosting makes sense</h2>
+      <p>Local development, CI pipelines and workloads with unusual extensions or strict data residency rules are often simpler on your own infrastructure.</p>
+
+  - title: 'Practical Uses of Machine Learning in Content Search'
+    slug: practical-uses-of-machine-learning-in-content-search
+    category: AI
+    featured: true
+    days_ago: 1
+    image: machine-learning-content-search.jpg
+    image_alt: 'Desk with a keyboard, tablet and notebook seen from above'
+    summary: 'From synonyms to semantic ranking: realistic ways to make site search smarter without a research team.'
+    body: |
+      <p>Keyword search works well until visitors use different words than your authors. Machine learning can close that gap.</p>
+      <h2>Low effort improvements</h2>
+      <ul><li>Synonym lists learned from search logs</li><li>Spelling correction for common typos</li><li>Boosting recent or popular content</li></ul>
+      <h2>Semantic search</h2>
+      <p>Vector embeddings let you match on meaning rather than exact words. Many search engines now support them natively, so you can experiment without building infrastructure from scratch.</p>
+
+  - title: 'Responsible AI: Questions to Ask Before Shipping a Model'
+    slug: responsible-ai-questions-before-shipping-a-model
+    category: AI
+    featured: false
+    days_ago: 20
+    image: responsible-ai-checklist.jpg
+    image_alt: 'Tidy workspace with speakers, keyboard and mouse'
+    summary: 'A short checklist covering data, fairness, monitoring and fallbacks for teams adding AI features to a product.'
+    body: |
+      <p>Adding a model to a product is a product decision, not only a technical one. A few questions asked early prevent painful surprises later.</p>
+      <h2>Before launch</h2>
+      <ul><li>Where did the training data come from, and do we have the right to use it?</li><li>How does the model perform for different groups of users?</li><li>What happens when the model is wrong?</li></ul>
+      <h2>After launch</h2>
+      <p>Monitor quality over time, give users a way to report problems, and keep a non-AI fallback for critical paths.</p>
