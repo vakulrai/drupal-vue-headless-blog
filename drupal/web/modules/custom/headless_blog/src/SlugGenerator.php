@@ -47,6 +47,9 @@ final class SlugGenerator {
     return substr(trim($text, '-'), 0, 120);
   }
 
+  /**
+   * Checks whether another blog post already uses the slug.
+   */
   private function exists(string $slug, ?int $nid): bool {
     $query = $this->entityTypeManager->getStorage('node')->getQuery()
       ->accessCheck(FALSE)

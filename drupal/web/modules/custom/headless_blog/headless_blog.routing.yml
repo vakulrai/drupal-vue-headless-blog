@@ -4,6 +4,7 @@ headless_blog.contact:
   defaults:
     _controller: '\Drupal\headless_blog\Controller\ContactController::submit'
   requirements:
+    # Public form: protected by validation, a honeypot and flood control.
     _access: 'TRUE'
   options:
     no_cache: TRUE
