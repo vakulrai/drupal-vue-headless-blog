@@ -36,7 +36,10 @@ drupal/web/.eslintignore
 drupal/web/.prettierignore
 drupal/web/.prettierrc.json
 drupal/web/.stylelintrc.json
-drupal/web/.ht.router.php
+drupal/web/README.md
+drupal/web/example.gitignore
+drupal/.editorconfig
+drupal/.gitattributes
 
 # Frontend
 node_modules/
