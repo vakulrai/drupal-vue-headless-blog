@@ -1,0 +1,19 @@
+uuid: e216ed09-3f4c-402b-8650-b2bbe86d34e9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_contact_message
+    - node.type.contact_submission
+id: node.contact_submission.field_contact_message
+field_name: field_contact_message
+entity_type: node
+bundle: contact_submission
+label: Message
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

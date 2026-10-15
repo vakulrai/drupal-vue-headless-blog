@@ -1,0 +1,11 @@
+uuid: 45f6abc4-8942-4256-a2f1-65184d1b9020
+langcode: en
+status: true
+dependencies: {  }
+name: 'Contact submission'
+type: contact_submission
+description: 'Messages sent from the website contact form. Created automatically.'
+help: null
+new_revision: false
+preview_mode: 0
+display_submitted: true

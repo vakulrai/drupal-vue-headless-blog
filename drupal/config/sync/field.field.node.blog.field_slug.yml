@@ -1,0 +1,19 @@
+uuid: c249c71c-7079-4dc5-9b90-166f997db57c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_slug
+    - node.type.blog
+id: node.blog.field_slug
+field_name: field_slug
+entity_type: node
+bundle: blog
+label: 'URL slug'
+description: 'Used in the website address, e.g. /blog/my-first-blog. Leave empty to generate it from the title.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

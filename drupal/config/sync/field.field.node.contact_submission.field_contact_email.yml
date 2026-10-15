@@ -1,0 +1,19 @@
+uuid: 636b49a4-e495-4ac1-a0b8-4ae6428c99ed
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_contact_email
+    - node.type.contact_submission
+id: node.contact_submission.field_contact_email
+field_name: field_contact_email
+entity_type: node
+bundle: contact_submission
+label: Email
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

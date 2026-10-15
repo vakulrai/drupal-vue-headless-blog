@@ -1,0 +1,11 @@
+uuid: 469a47c1-abed-4efa-a472-ea8f2c1ee39c
+langcode: en
+status: true
+dependencies: {  }
+name: Blog
+type: blog
+description: 'A blog post shown on the Vue.js website.'
+help: null
+new_revision: true
+preview_mode: 0
+display_submitted: true

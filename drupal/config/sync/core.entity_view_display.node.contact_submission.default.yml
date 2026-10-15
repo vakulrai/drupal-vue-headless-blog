@@ -1,0 +1,45 @@
+uuid: da55526c-f2bd-4a65-89b2-297703ce0522
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.contact_submission.field_contact_email
+    - field.field.node.contact_submission.field_contact_message
+    - field.field.node.contact_submission.field_contact_name
+    - node.type.contact_submission
+  module:
+    - user
+id: node.contact_submission.default
+targetEntityType: node
+bundle: contact_submission
+mode: default
+content:
+  field_contact_email:
+    type: email_mailto
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_contact_message:
+    type: basic_string
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_contact_name:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+      link_rel: canonical
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

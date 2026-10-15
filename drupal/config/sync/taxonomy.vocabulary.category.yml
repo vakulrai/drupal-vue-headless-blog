@@ -1,0 +1,9 @@
+uuid: 38a1176c-c1ba-40ff-9ed7-5a1a8434ec23
+langcode: en
+status: true
+dependencies: {  }
+name: Category
+vid: category
+description: 'Blog categories shown as filters on the website.'
+weight: 0
+new_revision: false

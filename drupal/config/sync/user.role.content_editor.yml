@@ -1,0 +1,42 @@
+uuid: bca7ac38-229c-4916-9e5d-a41d26ceb512
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+    - node.type.blog
+    - node.type.contact_submission
+    - taxonomy.vocabulary.category
+  module:
+    - file
+    - filter
+    - headless_blog
+    - node
+    - system
+    - taxonomy
+    - toolbar
+_core:
+  default_config_hash: g-zSnaBXJnH7VoimReFb6KcLjIgHCU-hisiShtZ9hjQ
+id: content_editor
+label: 'Content editor'
+weight: 2
+is_admin: false
+permissions:
+  - 'access administration pages'
+  - 'access content overview'
+  - 'access files overview'
+  - 'access taxonomy overview'
+  - 'access toolbar'
+  - 'create blog content'
+  - 'create terms in category'
+  - 'delete any blog content'
+  - 'delete any contact_submission content'
+  - 'delete terms in category'
+  - 'edit any blog content'
+  - 'edit terms in category'
+  - 'revert blog revisions'
+  - 'use text format basic_html'
+  - 'view blog revisions'
+  - 'view contact submissions'
+  - 'view own unpublished content'
+  - 'view the administration theme'
