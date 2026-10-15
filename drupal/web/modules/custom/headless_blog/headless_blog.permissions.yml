@@ -1,0 +1,4 @@
+view contact submissions:
+  title: 'View contact form submissions'
+  description: 'Read messages sent through the website contact form.'
+  restrict access: true
