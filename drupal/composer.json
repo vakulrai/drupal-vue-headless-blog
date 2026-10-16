@@ -106,5 +106,25 @@
     },
     "require-dev": {
         "drupal/coder": "^9.0"
+    },
+    "scripts": {
+        "build-themes": "sh scripts/build-custom-themes.sh",
+        "post-install-cmd": [
+            "@build-themes"
+        ],
+        "post-update-cmd": [
+            "@build-themes"
+        ],
+        "lint": "phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,yml web/modules/custom",
+        "lint:fix": "phpcbf --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,yml web/modules/custom",
+        "site:install": "drush site:install --existing-config -y",
+        "site:deploy": "drush deploy -y"
+    },
+    "scripts-descriptions": {
+        "build-themes": "Compile front-end assets (npm ci && npm run build) for every custom theme with a package.json.",
+        "lint": "Check custom code against the Drupal coding standards.",
+        "lint:fix": "Automatically fix coding standard violations where possible.",
+        "site:install": "Install Drupal from the configuration in config/sync.",
+        "site:deploy": "Run database updates, import configuration and rebuild caches."
     }
 }
