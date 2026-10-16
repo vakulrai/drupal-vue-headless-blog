@@ -40,14 +40,20 @@ final class HeadlessBlogServiceProvider extends ServiceProviderBase {
       ]);
     }
 
-    // Vue and Drupal run on different domains in production, which requires
-    // SameSite=None (and HTTPS) for the login cookie to be sent.
+    $options = $container->getParameter('session.storage.options');
+
+    // Issue a host-only session cookie. By default Drupal adds
+    // "domain=.<drupal host>", which browsers reject when the API is reached
+    // through the frontend's same-origin proxy (/cms on the Vercel domain).
+    // An empty cookie_domain makes Drupal omit the Domain attribute, so the
+    // cookie belongs to whichever host the browser actually talked to.
+    $options['cookie_domain'] = '';
+
     $same_site = getenv('SESSION_COOKIE_SAMESITE');
     if (in_array($same_site, ['Lax', 'Strict', 'None'], TRUE)) {
-      $options = $container->getParameter('session.storage.options');
       $options['cookie_samesite'] = $same_site;
-      $container->setParameter('session.storage.options', $options);
     }
+    $container->setParameter('session.storage.options', $options);
   }
 
 }
