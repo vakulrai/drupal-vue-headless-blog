@@ -8,11 +8,14 @@
 
 import { sanitizeHtml } from '@/utils/sanitize'
 
-export const API_BASE_URL = (import.meta.env.VITE_DRUPAL_API_URL || '').replace(/\/+$/, '')
+// Trimmed because values pasted into hosting dashboards often carry whitespace.
+const cleanUrl = (value) => (value || '').trim().replace(/\/+$/, '')
+
+export const API_BASE_URL = cleanUrl(import.meta.env.VITE_DRUPAL_API_URL)
 
 // In production the API is reached through the Vercel proxy (/cms), but the
 // Drupal admin UI must be opened on Drupal's own domain.
-export const DRUPAL_ADMIN_URL = (import.meta.env.VITE_DRUPAL_ADMIN_URL || API_BASE_URL).replace(/\/+$/, '')
+export const DRUPAL_ADMIN_URL = cleanUrl(import.meta.env.VITE_DRUPAL_ADMIN_URL) || API_BASE_URL
 
 export const PAGE_SIZE = 9
 

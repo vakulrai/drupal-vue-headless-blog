@@ -11,7 +11,9 @@ useSeo({ title: 'Your profile' })
 const router = useRouter()
 const auth = useAuth()
 const user = computed(() => auth.state.user)
-const adminUrl = `${DRUPAL_ADMIN_URL}/admin/content`
+// The CMS runs on its own domain with its own session, so open its login form;
+// Drupal sends already signed-in editors straight on to the destination.
+const adminUrl = `${DRUPAL_ADMIN_URL}/user/login?destination=/admin/content`
 
 async function onLogout() {
   await auth.logout()
@@ -36,5 +38,6 @@ async function onLogout() {
       <a :href="adminUrl" class="btn" target="_blank" rel="noopener">Open Drupal admin</a>
       <button type="button" class="btn btn-outline" @click="onLogout">Log out</button>
     </div>
+    <p class="muted small">The Drupal admin runs on its own domain, so it asks you to sign in there separately.</p>
   </section>
 </template>
