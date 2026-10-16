@@ -2,10 +2,10 @@
 # Values marked "sync: false" are entered in the Render dashboard and never committed.
 services:
   - type: web
-    name: headless-blog-cms
+    name: drupal-vue-headless-blog
     runtime: docker
     plan: free
-    region: singapore
+    region: oregon
     dockerContext: ./drupal
     dockerfilePath: ./drupal/Dockerfile
     # Deploys are triggered by GitHub Actions after CI passes.

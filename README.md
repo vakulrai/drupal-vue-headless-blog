@@ -7,9 +7,9 @@ the frontend — a post published in Drupal appears on the website on the next p
 
 | | |
 |---|---|
-| **Live website (Vue.js)** | `https://<your-project>.vercel.app` |
-| **Drupal CMS / API** | `https://<your-service>.onrender.com` (admin: `/user/login`) |
-| **Repository** | `https://github.com/<your-user>/drupal-vue-headless-blog` |
+| **Live website (Vue.js)** | https://drupal-vue-headless-blog.vercel.app |
+| **Drupal CMS / API** | https://drupal-vue-headless-blog.onrender.com (admin: [/user/login](https://drupal-vue-headless-blog.onrender.com/user/login)) |
+| **Repository** | https://github.com/vakulrai/drupal-vue-headless-blog |
 
 > The Drupal service runs on Render's free tier and sleeps when idle. The first request after a
 > pause can take 30–60 seconds; the Vue app shows a loading state and a retry button meanwhile.
@@ -160,7 +160,7 @@ native `<header>`/`<footer>` elements.
 ### 1. Clone
 
 ```bash
-git clone https://github.com/<your-user>/drupal-vue-headless-blog.git
+git clone https://github.com/vakulrai/drupal-vue-headless-blog.git
 cd drupal-vue-headless-blog
 ```
 
@@ -238,7 +238,7 @@ Nothing secret is committed. Templates: [`.env.example`](.env.example) (Drupal /
 
 | Variable | Required | Description |
 |---|---|---|
-| `VITE_DRUPAL_API_URL` | yes | Base URL of Drupal, no trailing slash, e.g. `https://headless-blog-cms.onrender.com` |
+| `VITE_DRUPAL_API_URL` | yes | Base URL of Drupal, no trailing slash, e.g. `https://drupal-vue-headless-blog.onrender.com` |
 | `VITE_SITE_NAME` | no | Name shown in the header and page titles |
 
 ### Drupal (`.env` locally, Render environment in production)
@@ -411,16 +411,15 @@ secrets are not configured, so forks still get green CI.
 
 **Aiven (MySQL)**
 1. Create a free MySQL service. Note host, port, user, password and database (`defaultdb`).
-2. Download the CA certificate.
-3. If install fails with a primary-key error, set `sql_require_primary_key` to off under
-   *Advanced configuration*.
+2. Download the CA certificate. No other settings are needed: Drupal 11 gives every table a
+   primary key, so Aiven's default `sql_require_primary_key=ON` works.
 
 **Render (Drupal)**
 1. *New → Blueprint* and select this repository (uses `render.yaml`), or create a Docker web service with root `drupal`.
 2. Fill in the environment variables: `DB_*` from Aiven, `DB_SSL_CA_PEM` = contents of the CA file,
    `DRUPAL_ADMIN_PASS`, `DRUPAL_ADMIN_MAIL`,
-   `TRUSTED_HOST_PATTERNS=^headless-blog-cms\.onrender\.com$`,
-   `CORS_ALLOWED_ORIGINS=https://<your-project>.vercel.app`.
+   `TRUSTED_HOST_PATTERNS=^drupal-vue-headless-blog\.onrender\.com$`,
+   `CORS_ALLOWED_ORIGINS=https://drupal-vue-headless-blog.vercel.app,http://localhost:5173`.
 3. *Settings → Deploy Hook*: copy the URL into the GitHub secret `RENDER_DEPLOY_HOOK_URL`.
 
 **Vercel (Vue)**
