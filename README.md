@@ -238,7 +238,8 @@ Nothing secret is committed. Templates: [`.env.example`](.env.example) (Drupal /
 
 | Variable | Required | Description |
 |---|---|---|
-| `VITE_DRUPAL_API_URL` | yes | Base URL of Drupal, no trailing slash, e.g. `https://drupal-vue-headless-blog.onrender.com` |
+| `VITE_DRUPAL_API_URL` | yes | Base URL of the Drupal API, no trailing slash. Locally `http://localhost:8080`; in production `https://drupal-vue-headless-blog.vercel.app/cms` (see [Same-origin API proxy](#same-origin-api-proxy)) |
+| `VITE_DRUPAL_ADMIN_URL` | no | Where "Open Drupal admin" points; defaults to `VITE_DRUPAL_API_URL`. Production: `https://drupal-vue-headless-blog.onrender.com` |
 | `VITE_SITE_NAME` | no | Name shown in the header and page titles |
 
 ### Drupal (`.env` locally, Render environment in production)
@@ -253,7 +254,7 @@ Nothing secret is committed. Templates: [`.env.example`](.env.example) (Drupal /
 | `DRUPAL_SITE_NAME` | Site name used on install |
 | `TRUSTED_HOST_PATTERNS` | Comma-separated regexes of allowed host names |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated origins allowed to call the API (the Vue app URL) |
-| `SESSION_COOKIE_SAMESITE` | `Lax` locally; `None` in production because Vue and Drupal are on different domains |
+| `SESSION_COOKIE_SAMESITE` | `Lax` (the browser only talks to Drupal through the same-origin `/cms` proxy, so the cookie is first-party) |
 | `REVERSE_PROXY` | `true` on Render so Drupal trusts `X-Forwarded-*` headers (HTTPS detection) |
 
 ### GitHub Actions secrets
@@ -418,19 +419,38 @@ secrets are not configured, so forks still get green CI.
 1. *New → Blueprint* and select this repository (uses `render.yaml`), or create a Docker web service with root `drupal`.
 2. Fill in the environment variables: `DB_*` from Aiven, `DB_SSL_CA_PEM` = contents of the CA file,
    `DRUPAL_ADMIN_PASS`, `DRUPAL_ADMIN_MAIL`,
-   `TRUSTED_HOST_PATTERNS=^drupal-vue-headless-blog\.onrender\.com$`,
-   `CORS_ALLOWED_ORIGINS=https://drupal-vue-headless-blog.vercel.app,http://localhost:5173`.
+   `TRUSTED_HOST_PATTERNS=^drupal-vue-headless-blog\.onrender\.com$,^drupal-vue-headless-blog\.vercel\.app$`,
+   `CORS_ALLOWED_ORIGINS=https://drupal-vue-headless-blog.vercel.app,http://localhost:5173`,
+   `SESSION_COOKIE_SAMESITE=Lax`.
 3. *Settings → Deploy Hook*: copy the URL into the GitHub secret `RENDER_DEPLOY_HOOK_URL`.
 
 **Vercel (Vue)**
 1. *Add New → Project*, import the GitHub repository and set **Root Directory** to `frontend`
    (framework preset: Vite).
-2. Add `VITE_DRUPAL_API_URL` (the Render URL) under *Environment Variables* and deploy.
+2. Under *Environment Variables* add `VITE_DRUPAL_API_URL=https://<project>.vercel.app/cms` and
+   `VITE_DRUPAL_ADMIN_URL=https://<service>.onrender.com`, then deploy. The `/cms` rewrite in
+   `frontend/vercel.json` must point at the Render URL.
 3. Create GitHub secrets: `VERCEL_PROJECT_ID` (*Project → Settings → General*),
    `VERCEL_ORG_ID` (*Account Settings → General → Vercel ID*, or the Team ID for a team) and
    `VERCEL_TOKEN` (*Account Settings → Tokens*).
 4. *Project → Settings → Git → Ignored Build Step*: choose "Don't build anything", so pushes are
    deployed only by GitHub Actions after CI passes.
+
+### Same-origin API proxy
+
+Vue (`vercel.app`) and Drupal (`onrender.com`) are different sites. Called directly, Drupal's login
+cookie would be a third-party cookie, which private windows, Safari and Firefox block. So
+`frontend/vercel.json` rewrites `/cms/*` on the Vue domain to Drupal:
+
+```
+https://drupal-vue-headless-blog.vercel.app/cms/jsonapi/node/blog
+        └─ Vercel proxy ─► https://drupal-vue-headless-blog.onrender.com/jsonapi/node/blog
+```
+
+To the browser, every API call, including login, is same-origin. The session cookie is
+first-party (`SameSite=Lax`) and no CORS preflight is needed. The API URL is still read
+from `VITE_DRUPAL_API_URL`, so local development talks to `http://localhost:8080` directly.
+The Drupal admin UI is opened on Drupal's own domain (`VITE_DRUPAL_ADMIN_URL`).
 
 ---
 
@@ -470,9 +490,9 @@ Contact form messages are listed under *Content* (type *Contact submission*).
   images uploaded through the admin UI are lost when the container restarts or redeploys.
   The seed images are restored automatically on every boot. A production setup would store files
   on object storage (e.g. the `s3fs` module with S3 or Cloudflare R2) or use a persistent disk.
-- **Cross-site login cookie:** the login session uses a `SameSite=None` cookie because Vue and
-  Drupal run on different domains. Browsers that block third-party cookies (Safari, or Firefox
-  with strict settings) will not keep the session; serving both from one domain would fix this.
+- **Proxy hostname in `vercel.json`:** Vercel rewrites cannot read environment variables, so the
+  Drupal hostname appears in `frontend/vercel.json`. Application code still only uses
+  `VITE_DRUPAL_API_URL`.
 - **Open Graph for SPAs:** meta tags are set client-side. Google renders JavaScript, but some
   social networks only read the initial HTML; server-side rendering or prerendering would cover them.
 - JSON:API in core does not return a total count, so pagination is previous/next rather than numbered pages.

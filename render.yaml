@@ -37,7 +37,8 @@ services:
         sync: false
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+      # The browser reaches Drupal through the same-origin /cms proxy on Vercel.
       - key: SESSION_COOKIE_SAMESITE
-        value: None
+        value: Lax
       - key: REVERSE_PROXY
         value: 'true'
