@@ -400,11 +400,14 @@ secrets are not configured, so forks still get green CI.
 3. *Settings → Deploy Hook*: copy the URL into the GitHub secret `RENDER_DEPLOY_HOOK_URL`.
 
 **Vercel (Vue)**
-1. In `frontend/`, run `npx vercel link` and create a project (root directory: leave empty).
-2. Add `VITE_DRUPAL_API_URL` (the Render URL) under *Project → Settings → Environment Variables*.
-3. Copy `orgId` and `projectId` from `frontend/.vercel/project.json` into the GitHub secrets
-   `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`, and create `VERCEL_TOKEN` in Vercel account settings.
-4. Disconnect Vercel's own Git integration (or leave it unlinked) so GitHub Actions is the only deployer.
+1. *Add New → Project*, import the GitHub repository and set **Root Directory** to `frontend`
+   (framework preset: Vite).
+2. Add `VITE_DRUPAL_API_URL` (the Render URL) under *Environment Variables* and deploy.
+3. Create GitHub secrets: `VERCEL_PROJECT_ID` (*Project → Settings → General*),
+   `VERCEL_ORG_ID` (*Account Settings → General → Vercel ID*, or the Team ID for a team) and
+   `VERCEL_TOKEN` (*Account Settings → Tokens*).
+4. *Project → Settings → Git → Ignored Build Step*: choose "Don't build anything", so pushes are
+   deployed only by GitHub Actions after CI passes.
 
 ---
 

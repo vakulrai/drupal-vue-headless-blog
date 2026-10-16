@@ -63,6 +63,10 @@ jobs:
     needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    # The Vercel project's Root Directory is "frontend", so the CLI runs from the repo root.
+    defaults:
+      run:
+        working-directory: .
     environment:
       name: production
       url: ${{ steps.deploy.outputs.url }}
