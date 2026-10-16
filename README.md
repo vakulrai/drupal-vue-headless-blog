@@ -203,6 +203,30 @@ npm run dev                 # http://localhost:5173
 
 Other scripts: `npm run lint`, `npm test`, `npm run build`, `npm run preview`.
 
+### Composer build lifecycle (Drupal)
+
+`drupal/composer.json` defines scripts that Composer runs as part of its lifecycle, plus named
+commands used by developers, CI and Docker:
+
+| Script | When it runs | What it does |
+|---|---|---|
+| `post-install-cmd` / `post-update-cmd` | automatically after `composer install` / `composer update` | calls `build-themes` |
+| `composer build-themes` | via the hooks above, or manually | runs `npm ci && npm run build` in every `web/themes/custom/*` theme with a `package.json` ([`scripts/build-custom-themes.sh`](drupal/scripts/build-custom-themes.sh)) |
+| `composer lint` / `composer lint:fix` | CI and developers | PHPCS / PHPCBF with the Drupal and DrupalPractice standards |
+| `composer site:install` | CI | `drush site:install --existing-config` |
+| `composer site:deploy` | manually | `drush deploy` (database updates + config import + cache rebuild) |
+
+Compiled theme assets are therefore produced during the build, never committed. This site is
+headless, so there is currently **no custom Drupal theme**: the public site is the Vue app
+(compiled by Vite in its own pipeline) and the admin uses core's Claro. The hook reports
+"nothing to build" today and starts compiling automatically as soon as a theme with a
+`package.json` is added. In that case the Docker image would also need Node.js, for example
+a Node build stage. `SKIP_THEME_BUILD=1` skips the step in PHP-only environments.
+
+In the production Docker image, `composer install` runs before the full source is copied in
+(to cache the dependency layer), so the Dockerfile runs `composer build-themes` again after
+`COPY . .`.
+
 ---
 
 ## Environment variables

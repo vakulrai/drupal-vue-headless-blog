@@ -73,6 +73,7 @@ jobs:
           key: composer-${{ hashFiles('drupal/composer.lock') }}
           restore-keys: composer-
 
+      # Also runs the post-install-cmd hook (custom theme asset build).
       - name: Composer install
         run: composer install --no-interaction --no-progress --prefer-dist
 
@@ -80,10 +81,10 @@ jobs:
         run: find web/modules/custom -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Drupal coding standards
-        run: vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,inc,install,yml web/modules/custom
+        run: composer lint
 
       - name: Install Drupal from config/sync
-        run: vendor/bin/drush site:install --existing-config -y --account-pass="$(openssl rand -hex 16)"
+        run: composer site:install -- --account-pass="$(openssl rand -hex 16)"
 
       - name: Configuration validation (database must match config/sync)
         run: |
