@@ -61,6 +61,8 @@ final class HeadlessBlogCommands extends DrushCommands {
   }
 
   /**
+   * Creates the category terms that do not exist yet.
+   *
    * @return array<string, int>
    *   Term IDs keyed by category name.
    */
@@ -81,6 +83,9 @@ final class HeadlessBlogCommands extends DrushCommands {
     return $ids;
   }
 
+  /**
+   * Creates the sample blog posts, skipping slugs that already exist.
+   */
   private function createBlogs(array $blogs, array $terms): void {
     $node_storage = $this->entityTypeManager->getStorage('node');
     $author = $this->editorialAuthor();
@@ -109,6 +114,9 @@ final class HeadlessBlogCommands extends DrushCommands {
     }
   }
 
+  /**
+   * Copies a bundled image into public files and returns its file entity.
+   */
   private function createImage(string $filename): FileInterface {
     $directory = self::SEED_DIR;
     $this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY);
@@ -165,6 +173,9 @@ final class HeadlessBlogCommands extends DrushCommands {
     return (int) $user->id();
   }
 
+  /**
+   * Absolute path of this module.
+   */
   private function modulePath(): string {
     return DRUPAL_ROOT . '/' . $this->moduleList->getPath('headless_blog');
   }
