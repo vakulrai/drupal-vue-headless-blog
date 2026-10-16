@@ -2,10 +2,10 @@
 # Values marked "sync: false" are entered in the Render dashboard and never committed.
 services:
   - type: web
-    name: headless-blog-cms
+    name: drupal-vue-headless-blog
     runtime: docker
     plan: free
-    region: singapore
+    region: oregon
     dockerContext: ./drupal
     dockerfilePath: ./drupal/Dockerfile
     # Deploys are triggered by GitHub Actions after CI passes.
@@ -37,7 +37,8 @@ services:
         sync: false
       - key: CORS_ALLOWED_ORIGINS
         sync: false
+      # The browser reaches Drupal through the same-origin /cms proxy on Vercel.
       - key: SESSION_COOKIE_SAMESITE
-        value: None
+        value: Lax
       - key: REVERSE_PROXY
         value: 'true'

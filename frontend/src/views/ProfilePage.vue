@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { API_BASE_URL } from '@/services/api'
+import { DRUPAL_ADMIN_URL } from '@/services/api'
 import { useAuth } from '@/stores/auth'
 import { useSeo } from '@/composables/useSeo'
 import { formatDate } from '@/utils/format'
@@ -11,7 +11,7 @@ useSeo({ title: 'Your profile' })
 const router = useRouter()
 const auth = useAuth()
 const user = computed(() => auth.state.user)
-const adminUrl = `${API_BASE_URL}/admin/content`
+const adminUrl = `${DRUPAL_ADMIN_URL}/admin/content`
 
 async function onLogout() {
   await auth.logout()

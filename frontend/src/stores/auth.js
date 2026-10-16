@@ -57,7 +57,14 @@ function ensureChecked() {
 async function login(name, pass) {
   const result = await apiLogin(name, pass)
   writeToken(result.logout_token)
-  return refresh()
+  const user = await refresh()
+  if (!user) {
+    // Drupal accepted the password, but the browser did not keep the session cookie.
+    throw new ApiError(
+      'You were signed in, but your browser blocked the session cookie. Allow cookies for this site and try again.',
+    )
+  }
+  return user
 }
 
 async function logout() {
