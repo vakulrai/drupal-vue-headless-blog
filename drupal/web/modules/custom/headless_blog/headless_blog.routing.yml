@@ -1,0 +1,19 @@
+headless_blog.contact:
+  path: '/api/contact'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\headless_blog\Controller\ContactController::submit'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: TRUE
+
+headless_blog.me:
+  path: '/api/me'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\headless_blog\Controller\ProfileController::me'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: TRUE

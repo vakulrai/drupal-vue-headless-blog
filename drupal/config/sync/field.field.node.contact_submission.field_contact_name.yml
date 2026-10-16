@@ -1,0 +1,19 @@
+uuid: de976e84-d71a-4cf5-9cf6-12f42d3de30e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_contact_name
+    - node.type.contact_submission
+id: node.contact_submission.field_contact_name
+field_name: field_contact_name
+entity_type: node
+bundle: contact_submission
+label: Name
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,19 @@
+uuid: 31c02c42-a429-4cbd-b323-476af5c3ad69
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_short_description
+    - node.type.blog
+id: node.blog.field_short_description
+field_name: field_short_description
+entity_type: node
+bundle: blog
+label: 'Short Description'
+description: 'One or two sentences shown on blog cards and used as the meta description.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

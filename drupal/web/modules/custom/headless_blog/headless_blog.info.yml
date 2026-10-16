@@ -1,0 +1,15 @@
+name: Headless Blog
+type: module
+description: 'Glue code for the decoupled Vue.js blog: slugs, CORS, contact and profile endpoints, demo content.'
+package: Custom
+core_version_requirement: ^11
+dependencies:
+  - drupal:datetime
+  - drupal:image
+  - drupal:jsonapi
+  - drupal:node
+  - drupal:path
+  - drupal:serialization
+  - drupal:taxonomy
+  - drupal:text
+  - drupal:user

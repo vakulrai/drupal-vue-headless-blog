@@ -1,0 +1,40 @@
+# Local development stack: Drupal 11 (PHP 8.3 + Apache) and MariaDB.
+#   cp .env.example .env && docker compose up -d
+#   Drupal admin: http://localhost:8080/user/login
+services:
+  db:
+    image: mariadb:11.4
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    command: --transaction-isolation=READ-COMMITTED --max-allowed-packet=64M
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  drupal:
+    build:
+      context: ./drupal
+      target: base
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+    ports:
+      - "8080:80"
+    volumes:
+      - ./drupal:/var/www/html
+
+volumes:
+  db-data:
