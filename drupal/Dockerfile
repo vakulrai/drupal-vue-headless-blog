@@ -37,10 +37,15 @@ CMD ["apache2-foreground"]
 FROM base AS prod
 
 # Install dependencies first so this layer is cached between code changes.
+# The post-install-cmd hook needs the build script, so it is copied in too.
 COPY composer.json composer.lock ./
+COPY scripts ./scripts
 RUN composer install --no-dev --no-interaction --no-progress --optimize-autoloader
 
+# Custom themes only exist after the full copy, so build them again here.
+# (A theme with a package.json would also need Node.js in this image.)
 COPY . .
-RUN composer dump-autoload --no-dev --optimize \
+RUN composer build-themes \
+ && composer dump-autoload --no-dev --optimize \
  && mkdir -p web/sites/default/files \
  && chown -R www-data:www-data web/sites/default/files
